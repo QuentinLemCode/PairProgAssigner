@@ -83,17 +83,24 @@
 
     // Fonction pour créer les relations d'assignation
     const assignItems = () => {
-      const n = items.length;
-      let assignString = "";
-      //mélange aléatoirement les éléments de la liste
-      items.sort(() => Math.random() - 0.5);
-      for (let i = 0; i < n; i++) {
-        for (let j = i+1; j < i+n/2; j++) {
-          assignString += items[i] + " assigne a " + items[j%n] + "<br>";
+        let itemsLocal = [...items]; 
+        const n = itemsLocal.length;
+        let assignString = "";
+        if(n%2!=0){
+          const randIndex = Math.floor(Math.random() * n);
+          itemsLocal.splice(randIndex, 1);
+          n--;
         }
-      }
-      assignList.innerHTML = assignString;
+        //mélange aléatoirement les éléments de la liste
+        itemsLocal.sort(() => Math.random() - 0.5);
+        for (let i = 0; i < n; i++) {
+          for (let j = i+1; j < i+n/2; j++) {
+            assignString += itemsLocal[i] + " assigne a " + itemsLocal[j%n] + "<br>";
+          }
+        }
+        assignList.innerHTML = assignString;
     }
+
     
     codeurInput.addEventListener("keyup", (event) => {
         if (event.keyCode === 13) {
