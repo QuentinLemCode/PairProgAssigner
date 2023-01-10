@@ -84,7 +84,7 @@
     // Fonction pour créer les relations d'assignation
     const assignItems = () => {
         let itemsLocal = [...items]; 
-        const n = itemsLocal.length;
+        let n = itemsLocal.length;
         let assignString = "";
         if(n%2!=0){
           const randIndex = Math.floor(Math.random() * n);
