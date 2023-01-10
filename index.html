@@ -109,7 +109,7 @@
       if(items.length <= 1) return;
       let assignString = "";
       const persons = items.map(item => new Person(item));
-      const iterations = 24;
+      persons.sort(() => Math.random() - 0.5);
       let failed = 0;
       let i = 0;
       while(true) {
