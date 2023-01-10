@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>PairProgAssigner</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/purecss@2.0.3/build/pure-min.css" integrity="sha384-cg6SkqEOCV1NbJoCu11+bm0NvBRc8IYLRGXkmNrqUBfTjmMYwNKPWBTIKyw9mHNJ" crossorigin="anonymous">
+  <style>
+    /* centrage de l'ensemble de la page */
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+    }
+    /* remplacement du bouton Supprimer par une croix */
+    button[id^='delete-btn']::before {
+      content: "✖";
+    }
+    button[id^='delete-btn']{
+      background-color: transparent;
+      border: none;
+      color: #E00;
+      font-size: 1.5em;
+    }
+    button[id^='delete-btn']:hover {
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="pure-form">
+    <fieldset>
+    <legend>Pair prog assigner</legend>
+    <label for="codeur">Codeur :</label>
+    <input type="text" id="codeur">
+    <button id="add-btn" class="pure-button pure-button-primary">Ajouter</button>
+  </fieldset>
+  <ul id="list"></ul>
+  <button id="assign-btn" class="pure-button pure-button-secondary">Assigner</button>
+  <div id="assign-list"></div>
+  </div>
+  <script>
+    // Récupération des éléments de la page
+    const codeurInput = document.getElementById("codeur");
+    const addBtn = document.getElementById("add-btn");
+    const list = document.getElementById("list");
+    const assignBtn = document.getElementById("assign-btn");
+    const assignList = document.getElementById("assign-list");
+
+    // Chargement des éléments persistés précédemment
+    let items = JSON.parse(localStorage.getItem("items")) || [];
+
+    // Fonction pour ajouter un élément à la liste et persister les données
+    const addItem = () => {
+      const codeur = codeurInput.value;
+      if (!codeur) return;
+
+      items.push(codeur);
+      localStorage.setItem("items", JSON.stringify(items));
+      codeurInput.value = "";
+      renderList();
+    }
+
+    // Fonction pour supprimer un élément de la liste et persister les données
+    const deleteItem = (index) => {
+      items.splice(index, 1);
+      localStorage.setItem("items", JSON.stringify(items));
+      renderList();
+    }
+
+    // Fonction pour afficher la liste des éléments
+    const renderList = () => {
+      list.innerHTML = "";
+      items.forEach((item, index) => {
+        const li = document.createElement("li");
+        li.textContent = item;
+        const deleteBtn = document.createElement("button");
+        deleteBtn.setAttribute("id","delete-btn-" + index);
+        deleteBtn.addEventListener("click", () => deleteItem(index));
+        li.appendChild(deleteBtn);
+        list.appendChild(li);
+      });
+    }
+
+    // Fonction pour créer les relations d'assignation
+    const assignItems = () => {
+      const n = items.length;
+      let assignString = "";
+      if(n%2!=0){
+        const randIndex = Math.floor(Math.random() * n);
+        items.splice(randIndex, 1);
+        n--;
+      }
+      //mélange aléatoirement les éléments de la liste
+      items.sort(() => Math.random() - 0.5);
+      for (let i = 0; i < n; i++) {
+        for (let j = i+1; j < i+n/2; j++) {
+          assignString += items[i] + " assigne a " + items[j%n] + "<br>";
+        }
+      }
+      assignList.innerHTML = assignString;
+    }
+
+    // Initialisation
+    renderList();
+
+    // Ajout d'un écouteur d'événement pour le bouton "Ajouter"
+    addBtn.addEventListener("click", addItem);
+    // Ajout d'un écouteur d'événement pour le bouton "Assigner"
+    assignBtn.addEventListener("click", assignItems);
+  </script>
+</body>
+</html>
