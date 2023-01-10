@@ -82,7 +82,7 @@
     }
 
     // Fonction pour créer les relations d'assignation
-        class Person {
+    class Person {
       assignedBy = [];
       assigned = [];
       name;
@@ -103,8 +103,7 @@
       if(notAssigned.length == 0) return false;
       return notAssigned[Math.floor(Math.random() * notAssigned.length)];
     }
-
-    // Fonction pour créer les relations d'assignation
+    
     const assignItems = () => {
       if(items.length <= 1) return;
       let assignString = "";
@@ -132,31 +131,6 @@
       assignList.innerHTML = assignString;
       
     }
-    
-    
-    const assignItems = () => {
-        let assignString = "";
-        const n = items.length;
-        let randIndex = 0;
-        if(n%2!=0){
-            randIndex = Math.floor(Math.random() * n);
-            for(let i=0;i<n;i++){
-                if(i!=randIndex)
-                  assignString += items[randIndex] + " assigne a " + items[i] + "<br>";
-            }
-        }
-        else{
-          for(let i=0;i<n;i++){
-            for(let j=0;j<n;j++){
-                if(j!=i)
-                  assignString += items[i] + " assigne a " + items[j] + "<br>";
-            }
-          }
-        }
-        assignList.innerHTML = assignString;
-    }
-
-
     
     codeurInput.addEventListener("keyup", (event) => {
         if (event.keyCode === 13) {
