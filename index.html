@@ -125,7 +125,7 @@
       }
       
       persons.forEach(p => {
-        assignString += `${p.name} assigne une session à ${p.assigned.map(a => a.name).join(',')}`
+        assignString += `${p.name} assigne une session à ${p.assigned.map(a => a.name).join(',')}<br>`
       })
       
       assignList.innerHTML = assignString;
