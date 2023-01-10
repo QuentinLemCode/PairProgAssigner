@@ -82,6 +82,58 @@
     }
 
     // Fonction pour créer les relations d'assignation
+        class Person {
+      assignedBy = [];
+      assigned = [];
+      name;
+      
+      assign = (person) => {
+        person.assignedBy.push(this)
+        this.assigned.push(person)
+      }
+
+      constructor(name) {
+        this.name = name;
+      }
+    }
+
+    const findRandomAssignee = (person, allPersons) => {
+      const allAssignation = person.assignedBy.concat(person.assigned);
+      const notAssigned = allPersons.filter(other => !allAssignation.some(p => p.name === other.name) && other.name !== person.name);
+      if(notAssigned.length == 0) return false;
+      return notAssigned[Math.floor(Math.random() * notAssigned.length)];
+    }
+
+    // Fonction pour créer les relations d'assignation
+    const assignItems = () => {
+      if(items.length <= 1) return;
+      let assignString = "";
+      const persons = items.map(item => new Person(item));
+      const iterations = 24;
+      let failed = 0;
+      let i = 0;
+      while(true) {
+        const person = persons[i % persons.length];
+        const assignee = findRandomAssignee(person, persons);
+        if (!assignee) {
+        	failed++;
+          if(failed > persons.length) break;
+          continue;
+        }
+        i++;
+        failed = 0;
+        person.assign(assignee);
+      }
+      
+      persons.forEach(p => {
+        assignString += `${p.name} assigne une session à ${p.assigned.map(a => a.name).join(',')}`
+      })
+      
+      assignList.innerHTML = assignString;
+      
+    }
+    
+    
     const assignItems = () => {
         let assignString = "";
         const n = items.length;
