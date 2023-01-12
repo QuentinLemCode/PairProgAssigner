@@ -105,31 +105,48 @@
     }
     
     const assignItems = () => {
-      if(items.length <= 1) return;
-      let assignString = "";
-      const persons = items.map(item => new Person(item));
-      persons.sort(() => Math.random() - 0.5);
-      let failed = 0;
-      let i = 0;
-      while(true) {
-        const person = persons[i % persons.length];
-        const assignee = findRandomAssignee(person, persons);
-        if (!assignee) {
-        	failed++;
-          if(failed > persons.length) break;
-          continue;
+        if (items.length <= 1) return;
+        let tuples = []
+        for (let i = 0; i < items.length; i++) {
+            for (let j = i + 1; j < items.length; j++) {
+                tuples.push([i, j])
+            }
         }
-        i++;
-        failed = 0;
-        person.assign(assignee);
-      }
-      
-      persons.forEach(p => {
-        assignString += `${p.name} assigne une session à ${p.assigned.map(a => a.name).join(',')}<br>`
-      })
-      
-      assignList.innerHTML = assignString;
-      
+
+        let counts = new Map();
+        const max = Math.ceil(tuples.length / items.length);
+        const min = Math.floor(tuples.length / items.length);
+
+        let result = [];
+
+        for (let tuple of tuples) {
+            let [first, second] = tuple;
+            let countFirst = counts.get(first);
+            let countSecond = counts.get(second);
+
+            if (countFirst === undefined) {
+                countFirst = 0;
+            }
+            if (countSecond === undefined) {
+                countSecond = 0;
+            }
+            if (countFirst >= min && countSecond < countFirst) {
+                result.push([second, first]);
+                counts.set(second, countSecond + 1);
+            } else {
+                result.push(tuple);
+                counts.set(first, countFirst + 1);
+            }
+        }
+
+        const assignations = {}
+        for (const tuple of result) {
+            const [first, second] = tuple.map(t => items[t])
+            assignations[first] = assignations[first] ? [...assignations[first], second] : [second];
+        }
+
+        assignList.innerHTML = Object.entries(assignations)
+            .map(([first, seconds]) => `${first} assigne une session à ${seconds}`).join('<br>');
     }
     
     codeurInput.addEventListener("keyup", (event) => {
