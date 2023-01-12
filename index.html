@@ -112,6 +112,8 @@
                 tuples.push([i, j])
             }
         }
+      
+        tuples = tuples.sort(() => 0.5 - Math.random());
 
         let counts = new Map();
         const max = Math.ceil(tuples.length / items.length);
