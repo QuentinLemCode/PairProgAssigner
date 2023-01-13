@@ -104,42 +104,51 @@
       return notAssigned[Math.floor(Math.random() * notAssigned.length)];
     }
     
-    const assignItems = () => {
-        if (items.length <= 1) return;
-        let tuples = []
-        for (let i = 0; i < items.length; i++) {
-            for (let j = i + 1; j < items.length; j++) {
-                tuples.push([i, j])
-            }
-        }
-      
-        tuples = tuples.sort(() => 0.5 - Math.random());
+   const assignItems = () => {
+  if (items.length <= 1) return;
+  let tuples = []
+  for (let i = 0; i < items.length; i++) {
+    for (let j = i + 1; j < items.length; j++) {
+      tuples.push([i, j])
+    }
+  }
 
-        let counts = new Map();
-        const max = Math.ceil(tuples.length / items.length);
-        const min = Math.floor(tuples.length / items.length);
+  tuples = tuples.sort(() => 0.5 - Math.random());
 
-        let result = [];
+  let counts = new Map();
+  const max = Math.ceil(tuples.length / items.length);
+  const min = Math.floor(tuples.length / items.length);
 
-        for (let tuple of tuples) {
-            let [first, second] = tuple;
-            let countFirst = counts.get(first);
-            let countSecond = counts.get(second);
+  let result = [];
+  let tuple;
 
-            if (countFirst === undefined) {
-                countFirst = 0;
-            }
-            if (countSecond === undefined) {
-                countSecond = 0;
-            }
-            if (countFirst >= min && countSecond < countFirst) {
-                result.push([second, first]);
-                counts.set(second, countSecond + 1);
-            } else {
-                result.push(tuple);
-                counts.set(first, countFirst + 1);
-            }
-        }
+  let avoidInfiniteLoop = 0;
+
+  while (tuples.length > 0) {
+    const tuple = tuples.shift()
+    let [first, second] = tuple;
+    let countFirst = counts.get(first) || 0;
+    let countSecond = counts.get(second) || 0;
+    const secondAssignations = result.map(res => res[1]).filter(sec => sec === second).length;
+    const firstAssignations = result.map(res => res[0]).filter(sec => sec === second).length;
+
+    const maxAllCounts = Array.from(counts.values()).sort((a, b) => b - a)[0] || 1;
+    if (countSecond < countFirst && secondAssignations >= maxAllCounts && countFirst === countSecond && (countFirst >= maxAllCounts || countSecond >= maxAllCounts) && (result.length % items.length) !== 0) {
+
+      avoidInfiniteLoop++;
+      if (avoidInfiniteLoop >= 10) throw new Error('p');
+      tuples.push(tuple);
+      continue;
+    }
+    if (countSecond < countFirst) {
+      result.push([second, first]);
+      counts.set(second, countSecond + 1);
+    } else {
+      result.push(tuple);
+      counts.set(first, countFirst + 1);
+    }
+  }
+}
 
         const assignations = {}
         for (const tuple of result) {
